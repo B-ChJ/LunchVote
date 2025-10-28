@@ -10,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity{
@@ -23,4 +24,10 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "user")
     private List<Vote> voteList;
+
+    public User(String email, String password, String name) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+    }
 }
