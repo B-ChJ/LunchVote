@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
+@Entity
 @Table(name = "menu")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Menu extends BaseEntity{

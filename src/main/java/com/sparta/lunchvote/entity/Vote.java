@@ -8,6 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Entity
 @Table(name = "vote")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Vote extends BaseEntity{

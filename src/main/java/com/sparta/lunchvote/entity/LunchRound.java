@@ -12,6 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Entity
 @Table(name = "lunch_round")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LunchRound extends BaseEntity{

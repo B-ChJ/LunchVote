@@ -5,6 +5,7 @@ import com.sparta.lunchvote.dto.GetUserResponse;
 import com.sparta.lunchvote.entity.User;
 import com.sparta.lunchvote.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    //user 회원가입
     @Transactional
     public GetUserResponse save(CreateUserRequest request) {
+        String email = request.getEmail();
+        String password = passwordEncoder.encode(request.getPassword());
+
+        if(userRepository.existsByUserEmail(email)) {
+            throw new IllegalArgumentException("이미 존재하는 email입니다.");
+        }
+
+
         User user = new User(request.getEmail(), request.getPassword(), request.getName());
         User savedUser = userRepository.save(user);
 
