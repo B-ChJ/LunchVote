@@ -2,7 +2,10 @@ package com.sparta.lunchvote.controller;
 
 import com.sparta.lunchvote.dto.CreateUserRequest;
 import com.sparta.lunchvote.dto.GetUserResponse;
+import com.sparta.lunchvote.dto.LoginRequest;
+import com.sparta.lunchvote.dto.LoginResponse;
 import com.sparta.lunchvote.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,5 +24,11 @@ public class UserController {
     @PostMapping("/auth/signup")
     public ResponseEntity<GetUserResponse> signup(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.ok(userService.save(request));
+    }
+
+    //로그인
+    @PostMapping("/auth/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse res) {
+        return ResponseEntity.ok(userService.login(request, res));
     }
 }
