@@ -24,6 +24,9 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private UserRoleEnum role;
+
     @OneToMany(mappedBy = "user")
     private List<Vote> voteList;
 

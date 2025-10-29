@@ -1,12 +1,11 @@
 package com.sparta.lunchvote.service;
 
-import com.sparta.lunchvote.dto.CreateUserRequest;
-import com.sparta.lunchvote.dto.GetUserResponse;
-import com.sparta.lunchvote.dto.LoginRequest;
-import com.sparta.lunchvote.dto.LoginResponse;
+import com.sparta.lunchvote.dto.*;
 import com.sparta.lunchvote.entity.User;
+import com.sparta.lunchvote.entity.UserRoleEnum;
 import com.sparta.lunchvote.jwt.JwtUtil;
 import com.sparta.lunchvote.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,10 +32,13 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 email입니다.");
         }
 
+        UserRoleEnum role = UserRoleEnum.USER;
+
         User user = User.builder()
                 .email(request.getEmail())
                 .password(password)
                 .name(request.getName())
+                .role(role)
                 .build();
         User savedUser = userRepository.save(user);
 
@@ -59,11 +61,31 @@ public class UserService {
         }
 
         // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
-        String accessToken = jwtUtil.createToken(user.getEmail(), ACCESS_TOKEN_TIME);
-        String refreshToken = jwtUtil.createToken(user.getEmail(), REFRESH_TOKEN_TIME);
+        String accessToken = jwtUtil.createToken(user.getEmail(), user.getRole(), ACCESS_TOKEN_TIME);
+        String refreshToken = jwtUtil.createToken(user.getEmail(), user.getRole(), REFRESH_TOKEN_TIME);
         jwtUtil.addJwtToCookie(accessToken, response);
 
         return new LoginResponse(accessToken, refreshToken);
     }
 
+    @Transactional
+    public LoginResponse refresh(RefreshRequest request) {
+        // refreshToken substring
+        String refreshToken = jwtUtil.substringToken(request.getRefreshToken());
+
+        if(!jwtUtil.validateToken(refreshToken)) {
+            throw new IllegalStateException("유효하지 않은 refreshToken입니다.");
+        }
+
+        Claims claims = jwtUtil.getUserInfoFromToken(refreshToken);
+
+        String email = claims.getSubject();
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+
+        String newAccessToken = jwtUtil.createToken(user.getEmail(), user.getRole(), ACCESS_TOKEN_TIME);
+        String newRefreshToken = jwtUtil.createToken(user.getEmail(), user.getRole(), REFRESH_TOKEN_TIME);
+
+        return new LoginResponse(newAccessToken, newRefreshToken);
+    }
 }
