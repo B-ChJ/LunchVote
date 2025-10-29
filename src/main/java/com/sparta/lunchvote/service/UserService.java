@@ -76,7 +76,7 @@ public class UserService {
         if(!jwtUtil.validateToken(refreshToken)) {
             throw new IllegalStateException("유효하지 않은 refreshToken입니다.");
         }
-
+        //Claims 클래스를 활용하는 방법
         Claims claims = jwtUtil.getUserInfoFromToken(refreshToken);
 
         String email = claims.getSubject();

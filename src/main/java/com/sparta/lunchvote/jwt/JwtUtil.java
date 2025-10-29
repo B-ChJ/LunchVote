@@ -40,6 +40,19 @@ public class JwtUtil {
                 .build();
     }
 
+    public void assertValid(String token) {
+        parser.parseClaimsJws(token);
+    }
+
+    public String getUserEmail(String token) {
+        return parser.parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getRole(String token) {
+        Object v = parser.parseClaimsJws(token).getBody().get("role");
+        return v == null ? null : v.toString();
+    }
+
     //1. JWT create
     public String createToken(String userEmail, UserRoleEnum role, long TOKEN_TIME) {
         Date date = new Date();
@@ -76,7 +89,7 @@ public class JwtUtil {
     //4. JWT 검증
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            parser.parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("유효하지 않은 JWT 서명입니다.");
