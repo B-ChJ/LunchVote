@@ -3,9 +3,13 @@ package com.sparta.lunchvote.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateUserRequest {
     @NotBlank(message = "이메일 입력은 필수입니다.")
     @Email
