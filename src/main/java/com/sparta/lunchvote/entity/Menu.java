@@ -1,13 +1,12 @@
 package com.sparta.lunchvote.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "menu")
 @NoArgsConstructor

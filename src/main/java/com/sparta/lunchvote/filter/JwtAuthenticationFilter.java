@@ -1,6 +1,8 @@
 package com.sparta.lunchvote.filter;
 
+import com.sparta.lunchvote.entity.User;
 import com.sparta.lunchvote.jwt.JwtUtil;
+import com.sparta.lunchvote.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -8,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,10 +24,12 @@ import java.rmi.ServerException;
 import java.util.Collection;
 import java.util.List;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
@@ -34,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 jwtUtil.substringToken(header) : null;
 
         if (token != null) {
-            if (jwtUtil.validateToken(token)) {
+            if (!(jwtUtil.validateToken(token))) {
                 throw new IllegalStateException("유효하지 않은 토큰입니다.");
             }
             //parser를 활용하는 방법
@@ -43,13 +48,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String email = jwtUtil.getUserEmail(token);
                 String role = jwtUtil.getRole(token);
 
+                User user = userRepository.findByEmail(email).orElseThrow(
+                        () -> new IllegalStateException("존재하지 않는 사용자입니다."));
+
                 Collection<? extends GrantedAuthority> authorities =
                         List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
                 Authentication auth =
-                        new UsernamePasswordAuthenticationToken(email, null, authorities);
+                        new UsernamePasswordAuthenticationToken(user, null, authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info("인증 정보 설정 완료: {}", auth.getName());
             } catch(ExpiredJwtException e) {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
                 return;

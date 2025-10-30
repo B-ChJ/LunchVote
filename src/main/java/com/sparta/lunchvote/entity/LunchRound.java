@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,8 +27,8 @@ public class LunchRound extends BaseEntity{
 
     private LocalDate date;
 
-    @OneToMany(mappedBy = "round")
-    private List<Menu> menus;
+    @OneToMany(mappedBy = "round", cascade = CascadeType.ALL)
+    private List<Menu> menus = new ArrayList<>();
 
     public LunchRound(User user, LocalDate date) {
         this.user = user;
