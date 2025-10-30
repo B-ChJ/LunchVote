@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "vote")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Vote extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,9 @@ public class Vote extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
+
+    public Vote(User user, Menu menu) {
+        this.user = user;
+        this.menu = menu;
+    }
 }

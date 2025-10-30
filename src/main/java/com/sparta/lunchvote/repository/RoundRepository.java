@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface RoundRepository extends JpaRepository<LunchRound, Long> {
     Optional<LunchRound> findByDate(LocalDate date);
+    Optional<LunchRound> findByMenusId(Long menuId);
     boolean existsByDate(LocalDate date);
 }
