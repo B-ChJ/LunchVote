@@ -1,6 +1,6 @@
 package com.sparta.lunchvote.entity;
 
-import com.fasterxml.jackson.databind.DatabindException;
+import com.sparta.lunchvote.dto.MenuResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "lunch_round")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class LunchRound extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,10 @@ public class LunchRound extends BaseEntity{
     private LocalDate date;
 
     @OneToMany(mappedBy = "round")
-    private List<Menu> menuList;
+    private List<Menu> menus;
 
-
+    public LunchRound(User user, LocalDate date) {
+        this.user = user;
+        this.date = date;
+    }
 }

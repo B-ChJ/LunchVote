@@ -24,6 +24,5 @@ public class Menu extends BaseEntity{
     private String type;
     private int price;
 
-    @OneToMany(mappedBy = "menu")
-    private List<Vote> voteList;
+    private int voteCount;
 }
