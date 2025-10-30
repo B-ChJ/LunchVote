@@ -38,8 +38,8 @@ public class RoundController {
     }
 
     @DeleteMapping("/rounds/{roundId}")
-    public ResponseEntity<Void> deleteROund(@PathVariable Long id, @AuthenticationPrincipal User user) {
-        roundservice.delete(id, user);
+    public ResponseEntity<Void> deleteROund(@PathVariable Long roundId, @AuthenticationPrincipal User user) {
+        roundservice.delete(roundId, user);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
