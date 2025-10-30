@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class RoundRequest {
     private LocalDate date;
-    private List<Menu> menus;
+    private List<MenuRequest> menus;
 }

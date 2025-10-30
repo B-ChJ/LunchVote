@@ -1,5 +1,6 @@
 package com.sparta.lunchvote.service;
 
+import com.sparta.lunchvote.dto.MenuRequest;
 import com.sparta.lunchvote.dto.MenuResponse;
 import com.sparta.lunchvote.dto.RoundRequest;
 import com.sparta.lunchvote.dto.RoundResponse;
@@ -29,11 +30,21 @@ public class RoundService {
             throw new IllegalStateException("이미 오늘의 라운드가 존재합니다.");
         }
         //아직 오늘의 라운드가 없을 경우
-        List<MenuResponse> menus = request.getMenus().stream()
+        LunchRound round = new LunchRound(user, date);
+        //메뉴 생성
+        List<Menu> menuList = request.getMenus().stream()
+                .map(menuRequest -> {
+                    Menu menu = new Menu(menuRequest.getName(),
+                            menuRequest.getType(),
+                            menuRequest.getPrice(),
+                            round);
+                    return menu;})
+                .toList();
+        // 반환할 DTO 생성
+        List<MenuResponse> menus = menuList.stream()
                 .map(MenuResponse::from)
                 .toList();
-
-        LunchRound round = new LunchRound(user, date);
+        //영속성
         LunchRound savedRound = roundRepository.save(round);
 
         return new RoundResponse(savedRound.getId(),

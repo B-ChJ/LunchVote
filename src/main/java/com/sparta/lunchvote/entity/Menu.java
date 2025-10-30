@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "menu")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Menu extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +25,11 @@ public class Menu extends BaseEntity{
     private int price;
 
     private int voteCount;
+
+    public Menu(String name, String type, int price, LunchRound round) {
+        this.name = name;
+        this.type = type;
+        this.price = price;
+        this.round = round;
+    }
 }
